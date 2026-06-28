@@ -1,0 +1,20 @@
+node_modules
+dist
+dist-ssr
+*.local
+
+# 原型打包文件体积较大，不纳入版本库（本地保留作设计参考）
+prototype/先写再说.html
+
+# Editor / tooling
+.vscode/*
+!.vscode/extensions.json
+.idea
+.claude
+.DS_Store
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*

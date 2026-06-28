@@ -1,0 +1,64 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background: #fbfaf7;
+}
+
+/* 细滚动条，贴合暖纸风格 */
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-thumb {
+  background: #e2dfd8;
+  border-radius: 8px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+textarea::placeholder {
+  color: #c4c0b8;
+}
+
+/* hover 态用类实现（替代原型的 style-hover） */
+.btn-primary {
+  transition: background 0.15s ease;
+}
+.btn-primary:hover {
+  background: #244f39 !important;
+}
+.btn-ghost {
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+.btn-ghost:hover {
+  border-color: #2e6b4f !important;
+  color: #2e6b4f !important;
+}
+.icon-btn {
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+.icon-btn:hover {
+  background: #f1eee8;
+  color: #2e6b4f;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
