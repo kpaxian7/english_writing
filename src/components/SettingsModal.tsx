@@ -43,7 +43,6 @@ export default function SettingsModal({ settings, prefs, onSave, onClose }: Prop
 
   return (
     <div
-      onClick={onClose}
       style={{
         position: 'fixed',
         inset: 0,
@@ -56,7 +55,6 @@ export default function SettingsModal({ settings, prefs, onSave, onClose }: Prop
       }}
     >
       <div
-        onClick={(e) => e.stopPropagation()}
         style={{
           width: 'min(520px, 100%)',
           maxHeight: '90vh',
@@ -68,17 +66,10 @@ export default function SettingsModal({ settings, prefs, onSave, onClose }: Prop
           fontFamily: fontFamilies.sans,
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 4 }}>
+        <div style={{ marginBottom: 4 }}>
           <h2 style={{ fontFamily: fontFamilies.brand, fontSize: 18, fontWeight: 600, color: colors.ink }}>
             设置
           </h2>
-          <button
-            onClick={onClose}
-            aria-label="关闭"
-            style={{ border: 'none', background: 'none', cursor: 'pointer', fontSize: 20, color: colors.muted2 }}
-          >
-            ×
-          </button>
         </div>
         <p style={{ fontSize: 12, color: colors.muted3, marginBottom: 20, lineHeight: 1.7 }}>
           填写任意 OpenAI 兼容服务的连接信息。Key 只保存在你自己的浏览器里，不会上传到任何服务器。
