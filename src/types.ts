@@ -9,6 +9,8 @@ export interface CorrectionError {
 // AI 返回的结构化纠错结果。
 export interface CorrectionResult {
   corrected: string
+  // 纠正后全文的中文翻译（自然意译，帮用户确认表达的意思）。
+  translation: string
   errors: CorrectionError[]
 }
 
@@ -27,4 +29,6 @@ export interface Preferences {
   writingFont: WritingFont
   highlightChanges: boolean
   showNotes: boolean
+  // 是否在「已纠正」下方展示中文翻译。
+  showTranslation: boolean
 }

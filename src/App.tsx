@@ -79,6 +79,12 @@ export default function App() {
     setShowSettings(false)
   }
 
+  function handleToggleTranslation() {
+    const next = { ...prefs, showTranslation: !prefs.showTranslation }
+    setPrefs(next)
+    savePrefs(next)
+  }
+
   const submitLabel =
     status === 'loading' ? '纠错中…' : status === 'done' ? '重新纠错 ↻' : '开始纠错 ↓'
 
@@ -136,6 +142,9 @@ export default function App() {
           <CorrectedPanel
             status={status}
             correctedText={result?.corrected ?? ''}
+            translation={result?.translation ?? ''}
+            showTranslation={prefs.showTranslation}
+            onToggleTranslation={handleToggleTranslation}
             errorMessage={errorMessage}
             fontFamily={fontFamily}
             fontSize={fontSize}

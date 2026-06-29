@@ -15,6 +15,7 @@ export const DEFAULT_PREFS: Preferences = {
   writingFont: '衬线',
   highlightChanges: true,
   showNotes: true,
+  showTranslation: true,
 }
 
 function load<T>(key: string, fallback: T): T {

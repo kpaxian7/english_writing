@@ -195,6 +195,11 @@ export default function SettingsModal({ settings, prefs, onSave, onClose }: Prop
           checked={p.showNotes}
           onChange={(v) => setP({ ...p, showNotes: v })}
         />
+        <Toggle
+          label="显示中文含义（纠正后附整段中文翻译）"
+          checked={p.showTranslation}
+          onChange={(v) => setP({ ...p, showTranslation: v })}
+        />
 
         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 24 }}>
           <button

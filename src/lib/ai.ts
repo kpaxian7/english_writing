@@ -37,7 +37,9 @@ function parseResult(content: string): CorrectionResult {
     to: String(e?.to ?? ''),
     note: String(e?.note ?? ''),
   }))
-  return { corrected: obj.corrected, errors }
+  // translation 容错：个别模型可能漏返回，缺失时回退为空字符串，不影响其余结果。
+  const translation = typeof obj.translation === 'string' ? obj.translation : ''
+  return { corrected: obj.corrected, translation, errors }
 }
 
 // 调用 OpenAI 兼容的 /chat/completions 接口（纯浏览器直连，无后端）。
