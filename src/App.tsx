@@ -85,8 +85,7 @@ export default function App() {
     savePrefs(next)
   }
 
-  const submitLabel =
-    status === 'loading' ? '纠错中…' : status === 'done' ? '重新纠错 ↻' : '开始纠错 ↓'
+  const submitLabel = status === 'loading' ? '纠错中' : '纠错'
 
   return (
     <div

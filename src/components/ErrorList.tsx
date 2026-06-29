@@ -97,7 +97,7 @@ export default function ErrorList({ status, errors, highlightChanges, showNotes 
           <CenterHint title="没有发现需要修改的地方，写得不错！" />
         )}
         {status === 'idle' && (
-          <CenterHint title="写完后点「开始纠错」，每一处需要修改的地方都会逐条列在这里。" />
+          <CenterHint title="写完后点「纠错」，每一处需要修改的地方都会逐条列在这里。" />
         )}
         {status === 'loading' && <CenterHint title="正在分析你的英文……" spinner />}
         {status === 'error' && <CenterHint title="纠错失败，请查看左侧提示或检查设置。" />}

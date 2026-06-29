@@ -6,7 +6,7 @@
 
 **自带 API Key**：填入任意 OpenAI 兼容服务的连接信息即可使用。Key 只保存在你自己的浏览器里，不经过任何服务器——**没有后端**。
 
-![screenshot](docs/screenshot.png)
+![screenshot](https://github.com/kpaxian7/kpaxian-imgur/blob/main/english_writing_preview.png?raw=true)
 
 ## 特点
 
