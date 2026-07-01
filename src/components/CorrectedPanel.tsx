@@ -134,6 +134,7 @@ export default function CorrectedPanel({
             <button
               className="btn-ghost"
               onClick={onCopy}
+              title={showTranslation && translation ? '复制英文 + 中文翻译' : '复制英文'}
               style={{
                 border: `1px solid ${colors.divider}`,
                 background: colors.white,
@@ -145,7 +146,7 @@ export default function CorrectedPanel({
                 borderRadius: 7,
               }}
             >
-              {copied ? '已复制 ✓' : '复制全文'}
+              {copied ? '已复制 ✓' : showTranslation && translation ? '复制中英' : '复制全文'}
             </button>
           </div>
         )}

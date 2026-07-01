@@ -70,8 +70,11 @@ export default function App() {
 
   function handleCopy() {
     if (!result) return
+    // 复制范围跟随「中文」开关：开着且有译文时连中文一起复制。
+    const withTranslation = prefs.showTranslation && result.translation
+    const text = withTranslation ? `${result.corrected}\n\n${result.translation}` : result.corrected
     try {
-      navigator.clipboard.writeText(result.corrected)
+      navigator.clipboard.writeText(text)
     } catch {
       /* ignore */
     }
