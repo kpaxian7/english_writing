@@ -3,12 +3,13 @@ import { colors } from '../theme'
 interface Props {
   text: string
   onChange: (v: string) => void
+  onSubmit: () => void
   fontFamily: string
   fontSize: string
   wordCount: number
 }
 
-export default function Editor({ text, onChange, fontFamily, fontSize, wordCount }: Props) {
+export default function Editor({ text, onChange, onSubmit, fontFamily, fontSize, wordCount }: Props) {
   return (
     <div
       className="panel-editor"
@@ -42,8 +43,14 @@ export default function Editor({ text, onChange, fontFamily, fontSize, wordCount
       <textarea
         value={text}
         onChange={(e) => onChange(e.target.value)}
+        onKeyDown={(e) => {
+          if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+            e.preventDefault()
+            onSubmit()
+          }
+        }}
         spellCheck={false}
-        placeholder="在这里写下你的英文——拼错、语序乱、时态错都没关系。"
+        placeholder="在这里写下你的英文——拼错、语序乱、时态错都没关系。（⌘/Ctrl + Enter 纠错）"
         style={{
           flex: 1,
           width: '100%',

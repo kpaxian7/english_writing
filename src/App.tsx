@@ -130,6 +130,7 @@ export default function App() {
           <Editor
             text={text}
             onChange={setText}
+            onSubmit={handleSubmit}
             fontFamily={fontFamily}
             fontSize={fontSize}
             wordCount={wordCount}
@@ -140,6 +141,7 @@ export default function App() {
               className="btn-primary"
               onClick={handleSubmit}
               disabled={status === 'loading'}
+              title="⌘ / Ctrl + Enter"
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
