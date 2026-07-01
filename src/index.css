@@ -1,4 +1,5 @@
 :root {
+  color-scheme: light;
   --c-paper: #fbfaf7;
   --c-white: #ffffff;
   --c-ink: #1f1e1b;
@@ -6,6 +7,7 @@
   --c-green: #2e6b4f;
   --c-green-dark: #244f39;
   --c-green-soft: rgba(46, 107, 79, 0.1);
+  --c-green-select: rgba(46, 107, 79, 0.22);
   --c-red: #b2554c;
   --c-red-line: rgba(178, 85, 76, 0.45);
   --c-border: #ece9e2;
@@ -23,6 +25,7 @@
 }
 
 :root[data-theme='dark'] {
+  color-scheme: dark;
   --c-paper: #1a1917;
   --c-white: #232220;
   --c-ink: #eceae4;
@@ -30,6 +33,7 @@
   --c-green: #6fb894;
   --c-green-dark: #9fd3b6;
   --c-green-soft: rgba(111, 184, 148, 0.14);
+  --c-green-select: rgba(111, 184, 148, 0.32);
   --c-red: #d98a80;
   --c-red-line: rgba(217, 138, 128, 0.5);
   --c-border: #322f2b;

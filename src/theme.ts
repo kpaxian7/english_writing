@@ -7,6 +7,7 @@ export const colors = {
   green: 'var(--c-green)',
   greenDark: 'var(--c-green-dark)',
   greenSoft: 'var(--c-green-soft)',
+  greenSelect: 'var(--c-green-select)',
   red: 'var(--c-red)',
   redLine: 'var(--c-red-line)',
 

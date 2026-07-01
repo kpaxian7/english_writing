@@ -53,6 +53,8 @@ export default function App() {
     setStatus('loading')
     setErrorMessage('')
     setSelectedError(null)
+    if (copyTimer.current) clearTimeout(copyTimer.current)
+    setCopied(false)
     try {
       const res = await correctText(text, settings, controller.signal)
       setResult(res)
@@ -113,6 +115,8 @@ export default function App() {
     setStatus('done')
     setSelectedError(null)
     setErrorMessage('')
+    if (copyTimer.current) clearTimeout(copyTimer.current)
+    setCopied(false)
     setShowHistory(false)
   }
 

@@ -9,17 +9,36 @@ interface Segment {
   errorIndex: number | null
 }
 
-// 在纠正后的全文里按顺序定位每条错误的 to 片段，拆成可高亮的段。
+// 在纠正后的全文里定位每条错误的 to 片段，拆成可高亮的段。
+// 为每条错误各自寻找一个不与其它错误重叠的出现位置（与错误数组顺序无关），
+// 这样即使模型给出的错误顺序和文中出现顺序不一致，也不会漏掉某处高亮，
+// 同时通过「跳过已占用区间」来区分重复出现的相同片段。
 function buildSegments(text: string, errors: CorrectionError[]): Segment[] {
-  const segments: Segment[] = []
-  let cursor = 0
+  const taken: { start: number; end: number; errorIndex: number }[] = []
   errors.forEach((err, i) => {
     if (!err.to) return
-    const idx = text.indexOf(err.to, cursor)
-    if (idx === -1) return
-    if (idx > cursor) segments.push({ text: text.slice(cursor, idx), errorIndex: null })
-    segments.push({ text: err.to, errorIndex: i })
-    cursor = idx + err.to.length
+    let from = 0
+    while (from <= text.length) {
+      const idx = text.indexOf(err.to, from)
+      if (idx === -1) return
+      const end = idx + err.to.length
+      const overlaps = taken.some((t) => idx < t.end && end > t.start)
+      if (!overlaps) {
+        taken.push({ start: idx, end, errorIndex: i })
+        return
+      }
+      from = idx + 1
+    }
+  })
+  taken.sort((a, b) => a.start - b.start)
+
+  const segments: Segment[] = []
+  let cursor = 0
+  taken.forEach((t) => {
+    if (t.start < cursor) return
+    if (t.start > cursor) segments.push({ text: text.slice(cursor, t.start), errorIndex: null })
+    segments.push({ text: text.slice(t.start, t.end), errorIndex: t.errorIndex })
+    cursor = t.end
   })
   if (cursor < text.length) segments.push({ text: text.slice(cursor), errorIndex: null })
   if (segments.length === 0) segments.push({ text, errorIndex: null })
@@ -175,7 +194,7 @@ export default function CorrectedPanel({
                       borderRadius: 3,
                       padding: '0 2px',
                       background: isSelected
-                        ? 'rgba(46,107,79,0.22)'
+                        ? colors.greenSelect
                         : highlightChanges
                           ? colors.greenSoft
                           : 'transparent',
