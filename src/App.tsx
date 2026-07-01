@@ -127,6 +127,44 @@ export default function App() {
         onOpenSettings={() => setShowSettings(true)}
       />
 
+      {!settings.apiKey.trim() && (
+        <div
+          style={{
+            flex: 'none',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 12,
+            padding: '10px 20px',
+            background: colors.greenSoft,
+            borderBottom: `1px solid ${colors.border}`,
+          }}
+        >
+          <span style={{ fontSize: 12.5, lineHeight: 1.6, color: colors.greenDark }}>
+            👋 还没配置 API Key —— 填入任意 OpenAI 兼容服务的地址、Key 和模型即可开始纠错，Key 只存在你自己的浏览器里。
+          </span>
+          <button
+            className="btn-primary"
+            onClick={() => setShowSettings(true)}
+            style={{
+              flex: 'none',
+              border: 'none',
+              background: colors.green,
+              color: colors.paper,
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+              fontSize: 12.5,
+              fontWeight: 500,
+              padding: '6px 14px',
+              borderRadius: 8,
+              whiteSpace: 'nowrap',
+            }}
+          >
+            打开设置
+          </button>
+        </div>
+      )}
+
       <div className="app-main">
         {/* 左列：原文 + 按钮 + 已纠正 */}
         <div className="app-col-left">
