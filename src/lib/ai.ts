@@ -95,8 +95,6 @@ async function requestChat(
   if (!settings.apiKey.trim()) throw new AIError('请先在设置里填写 API Key。')
   if (!settings.model.trim()) throw new AIError('请先在设置里填写模型名称。')
 
-  const temperature = typeof settings.temperature === 'number' ? settings.temperature : 0.2
-
   // 组合调用方的取消信号与超时：任一触发都中断请求。
   const controller = new AbortController()
   let timedOut = false
@@ -120,7 +118,7 @@ async function requestChat(
       },
       body: JSON.stringify({
         model: settings.model.trim(),
-        temperature,
+        temperature: 0.2,
         messages,
         response_format: { type: 'json_object' },
       }),
