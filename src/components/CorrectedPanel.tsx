@@ -48,6 +48,7 @@ function buildSegments(text: string, errors: CorrectionError[]): Segment[] {
 interface Props {
   status: Status
   correctedText: string
+  streamingText: string
   errors: CorrectionError[]
   selectedError: number | null
   onSelectError: (i: number | null) => void
@@ -67,6 +68,7 @@ interface Props {
 export default function CorrectedPanel({
   status,
   correctedText,
+  streamingText,
   errors,
   selectedError,
   onSelectError,
@@ -257,11 +259,17 @@ export default function CorrectedPanel({
             </span>
           </div>
         )}
-        {status === 'loading' && (
-          <div style={{ padding: '18px 20px' }}>
-            <span style={{ color: colors.muted5 }}>正在纠错中……</span>
-          </div>
-        )}
+        {status === 'loading' &&
+          (streamingText ? (
+            <div style={textStyle}>
+              {streamingText}
+              <span className="stream-caret">▍</span>
+            </div>
+          ) : (
+            <div style={{ padding: '18px 20px' }}>
+              <span style={{ color: colors.muted5 }}>正在纠错中……</span>
+            </div>
+          ))}
         {status === 'error' && (
           <div style={{ padding: '18px 20px' }}>
             <span style={{ color: colors.red }}>{errorMessage}</span>

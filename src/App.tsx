@@ -21,6 +21,7 @@ export default function App() {
   const [text, setText] = useState(SAMPLE)
   const [status, setStatus] = useState<Status>('idle')
   const [result, setResult] = useState<CorrectionResult | null>(null)
+  const [streamingText, setStreamingText] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
   const [showSettings, setShowSettings] = useState(false)
   const [showHistory, setShowHistory] = useState(false)
@@ -53,12 +54,17 @@ export default function App() {
     setStatus('loading')
     setErrorMessage('')
     setSelectedError(null)
+    setStreamingText('')
     if (copyTimer.current) clearTimeout(copyTimer.current)
     setCopied(false)
     try {
-      const res = await correctText(text, settings, controller.signal)
+      const res = await correctText(text, settings, {
+        signal: controller.signal,
+        onProgress: setStreamingText,
+      })
       setResult(res)
       setStatus('done')
+      setStreamingText('')
       const entry: HistoryEntry = { id: String(Date.now()), ts: Date.now(), input: text, result: res }
       const nextHistory = [entry, ...history].slice(0, 30)
       setHistory(nextHistory)
@@ -223,6 +229,7 @@ export default function App() {
           <CorrectedPanel
             status={status}
             correctedText={result?.corrected ?? ''}
+            streamingText={streamingText}
             errors={result?.errors ?? []}
             selectedError={selectedError}
             onSelectError={setSelectedError}

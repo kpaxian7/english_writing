@@ -131,6 +131,18 @@ textarea::placeholder {
   }
 }
 
+/* 流式输出时的闪烁光标 */
+.stream-caret {
+  color: var(--c-green);
+  font-weight: 400;
+  animation: blink 1s step-end infinite;
+}
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
 /* 布局：桌面固定两栏满屏；窄屏改为纵向堆叠、整页滚动 */
 .app-root {
   height: 100vh;
