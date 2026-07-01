@@ -77,3 +77,63 @@ textarea::placeholder {
     transform: rotate(360deg);
   }
 }
+
+/* 布局：桌面固定两栏满屏；窄屏改为纵向堆叠、整页滚动 */
+.app-root {
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.app-main {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  gap: 18px;
+  padding: 22px 28px;
+}
+.app-col-left {
+  flex: 1.55;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+@media (max-width: 768px) {
+  .app-root {
+    height: auto;
+    min-height: 100vh;
+    overflow-y: auto;
+  }
+  .app-main {
+    flex-direction: column;
+    padding: 16px;
+    gap: 14px;
+  }
+  .app-col-left {
+    flex: none;
+  }
+  .panel-editor {
+    flex: none !important;
+    height: 240px;
+  }
+  .panel-corrected {
+    flex: none !important;
+    height: 300px;
+  }
+  .panel-errors {
+    flex: none !important;
+    height: 420px;
+  }
+  .app-header {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .header-tagline {
+    display: none;
+  }
+}

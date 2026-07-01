@@ -11,6 +11,7 @@ interface Props {
 export default function Editor({ text, onChange, fontFamily, fontSize, wordCount }: Props) {
   return (
     <div
+      className="panel-editor"
       style={{
         flex: 1,
         minHeight: 0,

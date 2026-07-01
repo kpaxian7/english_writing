@@ -81,6 +81,7 @@ export default function ErrorList({
 
   return (
     <div
+      className="panel-errors"
       style={{
         flex: 1,
         minWidth: 0,

@@ -84,6 +84,7 @@ export default function CorrectedPanel({
 
   return (
     <div
+      className="panel-corrected"
       style={{
         flex: 1,
         minHeight: 0,

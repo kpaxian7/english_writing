@@ -9,6 +9,7 @@ export default function Header({
 }) {
   return (
     <header
+      className="app-header"
       style={{
         height: 62,
         flex: 'none',
@@ -47,7 +48,7 @@ export default function Header({
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 18 }}>
-        <span style={{ fontSize: 11.5, letterSpacing: '0.06em', color: colors.muted2 }}>
+        <span className="header-tagline" style={{ fontSize: 11.5, letterSpacing: '0.06em', color: colors.muted2 }}>
           别怕写错，先把想法写出来
         </span>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>

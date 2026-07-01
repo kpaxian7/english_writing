@@ -112,14 +112,11 @@ export default function App() {
 
   return (
     <div
+      className="app-root"
       style={{
-        height: '100vh',
-        overflow: 'hidden',
         background: colors.paper,
         color: colors.ink,
         fontFamily: fontFamilies.sans,
-        display: 'flex',
-        flexDirection: 'column',
       }}
     >
       <Header
@@ -127,9 +124,9 @@ export default function App() {
         onOpenSettings={() => setShowSettings(true)}
       />
 
-      <div style={{ flex: 1, minHeight: 0, display: 'flex', gap: 18, padding: '22px 28px' }}>
+      <div className="app-main">
         {/* 左列：原文 + 按钮 + 已纠正 */}
-        <div style={{ flex: 1.55, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 14 }}>
+        <div className="app-col-left">
           <Editor
             text={text}
             onChange={setText}
