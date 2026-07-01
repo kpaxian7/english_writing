@@ -37,6 +37,7 @@ interface Props {
   showTranslation: boolean
   onToggleTranslation: () => void
   errorMessage: string
+  onRetry: () => void
   fontFamily: string
   fontSize: string
   copied: boolean
@@ -54,6 +55,7 @@ export default function CorrectedPanel({
   showTranslation,
   onToggleTranslation,
   errorMessage,
+  onRetry,
   fontFamily,
   fontSize,
   copied,
@@ -229,6 +231,24 @@ export default function CorrectedPanel({
         {status === 'error' && (
           <div style={{ padding: '18px 20px' }}>
             <span style={{ color: colors.red }}>{errorMessage}</span>
+            <div style={{ marginTop: 12 }}>
+              <button
+                className="btn-ghost"
+                onClick={onRetry}
+                style={{
+                  border: `1px solid ${colors.divider}`,
+                  background: colors.white,
+                  cursor: 'pointer',
+                  fontFamily: 'inherit',
+                  fontSize: 12.5,
+                  color: colors.muted4,
+                  padding: '6px 16px',
+                  borderRadius: 8,
+                }}
+              >
+                重试
+              </button>
+            </div>
           </div>
         )}
       </div>

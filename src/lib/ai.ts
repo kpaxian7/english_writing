@@ -18,6 +18,9 @@ interface ChatResponse {
   choices?: { message?: { content?: string } }[]
 }
 
+// 单次请求最长等待时间（毫秒），避免请求挂起时一直卡在「纠错中」。
+const REQUEST_TIMEOUT_MS = 60000
+
 function normalizeBaseUrl(baseUrl: string): string {
   return baseUrl.trim().replace(/\/+$/, '')
 }
@@ -87,6 +90,19 @@ async function requestChat(
   if (!settings.apiKey.trim()) throw new AIError('请先在设置里填写 API Key。')
   if (!settings.model.trim()) throw new AIError('请先在设置里填写模型名称。')
 
+  // 组合调用方的取消信号与超时：任一触发都中断请求。
+  const controller = new AbortController()
+  let timedOut = false
+  const timer = setTimeout(() => {
+    timedOut = true
+    controller.abort()
+  }, REQUEST_TIMEOUT_MS)
+  const onAbort = () => controller.abort()
+  if (signal) {
+    if (signal.aborted) controller.abort()
+    else signal.addEventListener('abort', onAbort)
+  }
+
   let res: Response
   try {
     res = await fetch(`${baseUrl}/chat/completions`, {
@@ -101,13 +117,19 @@ async function requestChat(
         messages,
         response_format: { type: 'json_object' },
       }),
-      signal,
+      signal: controller.signal,
     })
   } catch (e) {
+    if (timedOut) {
+      throw new AIError('请求超时（超过 60 秒无响应）。请检查网络或更换端点后重试。')
+    }
     if (e instanceof DOMException && e.name === 'AbortError') throw e
     throw new AIError(
       '网络请求失败。可能是 API 地址不可达，或该端点不允许浏览器直连（CORS）。请检查设置或更换端点。',
     )
+  } finally {
+    clearTimeout(timer)
+    if (signal) signal.removeEventListener('abort', onAbort)
   }
 
   if (!res.ok) {

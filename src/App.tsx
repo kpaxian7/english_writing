@@ -227,6 +227,7 @@ export default function App() {
             showTranslation={prefs.showTranslation}
             onToggleTranslation={handleToggleTranslation}
             errorMessage={errorMessage}
+            onRetry={handleSubmit}
             fontFamily={fontFamily}
             fontSize={fontSize}
             copied={copied}
