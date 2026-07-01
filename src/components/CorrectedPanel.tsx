@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import type { CorrectionError } from '../types'
+import type { CorrectionError, TokenUsage } from '../types'
 import { colors, fontFamilies } from '../theme'
 
 type Status = 'idle' | 'loading' | 'done' | 'error'
@@ -36,6 +36,7 @@ interface Props {
   translation: string
   showTranslation: boolean
   onToggleTranslation: () => void
+  usage?: TokenUsage
   errorMessage: string
   onRetry: () => void
   fontFamily: string
@@ -54,6 +55,7 @@ export default function CorrectedPanel({
   translation,
   showTranslation,
   onToggleTranslation,
+  usage,
   errorMessage,
   onRetry,
   fontFamily,
@@ -212,6 +214,19 @@ export default function CorrectedPanel({
                 >
                   {translation}
                 </p>
+              </div>
+            )}
+            {usage && (
+              <div
+                style={{
+                  padding: '0 20px 16px',
+                  fontSize: 11,
+                  color: colors.muted2,
+                  letterSpacing: '0.02em',
+                }}
+              >
+                本次用量 · 输入 {usage.promptTokens} · 输出 {usage.completionTokens} · 共{' '}
+                {usage.totalTokens} tokens
               </div>
             )}
           </>

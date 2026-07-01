@@ -1,4 +1,4 @@
-import type { CorrectionError, CorrectionResult, ErrorExplanation, Settings } from '../types'
+import type { CorrectionError, CorrectionResult, ErrorExplanation, Settings, TokenUsage } from '../types'
 import {
   SYSTEM_PROMPT,
   buildUserPrompt,
@@ -16,6 +16,11 @@ interface ChatMessage {
 
 interface ChatResponse {
   choices?: { message?: { content?: string } }[]
+  usage?: {
+    prompt_tokens?: number
+    completion_tokens?: number
+    total_tokens?: number
+  }
 }
 
 // 单次请求最长等待时间（毫秒），避免请求挂起时一直卡在「纠错中」。
@@ -158,6 +163,17 @@ function extractContent(data: ChatResponse): string {
   return content
 }
 
+function extractUsage(data: ChatResponse): TokenUsage | undefined {
+  const u = data.usage
+  if (!u) return undefined
+  const promptTokens = typeof u.prompt_tokens === 'number' ? u.prompt_tokens : 0
+  const completionTokens = typeof u.completion_tokens === 'number' ? u.completion_tokens : 0
+  const totalTokens =
+    typeof u.total_tokens === 'number' ? u.total_tokens : promptTokens + completionTokens
+  if (!totalTokens) return undefined
+  return { promptTokens, completionTokens, totalTokens }
+}
+
 // 纠错：返回纠正后全文 + 中文翻译 + 结构化错误点。
 export async function correctText(
   text: string,
@@ -172,7 +188,7 @@ export async function correctText(
     settings,
     signal,
   )
-  return parseResult(extractContent(data))
+  return { ...parseResult(extractContent(data)), usage: extractUsage(data) }
 }
 
 // 针对单处修改再问 AI 要一份深入讲解 + 例句。

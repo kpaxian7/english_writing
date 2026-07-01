@@ -226,6 +226,7 @@ export default function App() {
             translation={result?.translation ?? ''}
             showTranslation={prefs.showTranslation}
             onToggleTranslation={handleToggleTranslation}
+            usage={result?.usage}
             errorMessage={errorMessage}
             onRetry={handleSubmit}
             fontFamily={fontFamily}

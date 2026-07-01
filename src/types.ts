@@ -6,12 +6,21 @@ export interface CorrectionError {
   note: string
 }
 
+// 本次请求的 token 用量。
+export interface TokenUsage {
+  promptTokens: number
+  completionTokens: number
+  totalTokens: number
+}
+
 // AI 返回的结构化纠错结果。
 export interface CorrectionResult {
   corrected: string
   // 纠正后全文的中文翻译（自然意译，帮用户确认表达的意思）。
   translation: string
   errors: CorrectionError[]
+  // token 用量（若接口返回）。
+  usage?: TokenUsage
 }
 
 // 一条纠错历史记录，保存在 localStorage，可回看/恢复。
