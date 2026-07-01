@@ -11,6 +11,7 @@ export const DEFAULT_SETTINGS: Settings = {
   baseUrl: 'https://api.deepseek.com/v1',
   apiKey: '',
   model: 'deepseek-chat',
+  temperature: 0.2,
 }
 
 export const DEFAULT_PREFS: Preferences = {

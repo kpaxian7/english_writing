@@ -33,6 +33,8 @@ export interface Settings {
   baseUrl: string
   apiKey: string
   model: string
+  // 采样温度：越低越稳定，越高越多样。
+  temperature: number
 }
 
 // 排版字体

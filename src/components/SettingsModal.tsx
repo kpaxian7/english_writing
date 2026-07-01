@@ -150,6 +150,30 @@ export default function SettingsModal({ settings, prefs, onSave, onClose }: Prop
           />
         </Field>
 
+        <Field label={`采样温度：${draft.temperature.toFixed(1)}`}>
+          <input
+            type="range"
+            min={0}
+            max={1}
+            step={0.1}
+            value={draft.temperature}
+            onChange={(e) => setDraft({ ...draft, temperature: Number(e.target.value) })}
+            style={{ width: '100%', accentColor: colors.green, cursor: 'pointer' }}
+          />
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              fontSize: 11,
+              color: colors.muted3,
+              marginTop: 4,
+            }}
+          >
+            <span>更稳定 · 0</span>
+            <span>更多样 · 1</span>
+          </div>
+        </Field>
+
         <div style={{ height: 1, background: colors.border, margin: '20px 0' }} />
 
         {/* 界面偏好 */}
