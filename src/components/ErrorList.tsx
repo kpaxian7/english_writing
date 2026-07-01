@@ -1,8 +1,16 @@
-import { useEffect, useRef } from 'react'
-import type { CorrectionError } from '../types'
+import { useEffect, useRef, useState } from 'react'
+import type { CorrectionError, ErrorExplanation, Settings } from '../types'
+import { explainError, AIError } from '../lib/ai'
 import { colors, dotColor, fontFamilies } from '../theme'
 
 type Status = 'idle' | 'loading' | 'done' | 'error'
+
+interface ExplainState {
+  open: boolean
+  status: 'loading' | 'done' | 'error'
+  data?: ErrorExplanation
+  message?: string
+}
 
 interface Props {
   status: Status
@@ -11,6 +19,8 @@ interface Props {
   showNotes: boolean
   selectedError: number | null
   onSelectError: (i: number | null) => void
+  settings: Settings
+  contextText: string
 }
 
 export default function ErrorList({
@@ -20,6 +30,8 @@ export default function ErrorList({
   showNotes,
   selectedError,
   onSelectError,
+  settings,
+  contextText,
 }: Props) {
   const selectedRef = useRef<HTMLDivElement | null>(null)
   useEffect(() => {
@@ -27,6 +39,36 @@ export default function ErrorList({
       selectedRef.current.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
     }
   }, [selectedError])
+
+  // 每处错误的「详解」展开状态（按索引存），换一批错误时清空。
+  const [explains, setExplains] = useState<Record<number, ExplainState>>({})
+  useEffect(() => {
+    setExplains({})
+  }, [errors])
+
+  async function fetchExplain(i: number, err: CorrectionError) {
+    try {
+      const data = await explainError(err, contextText, settings)
+      setExplains((prev) => ({ ...prev, [i]: { open: prev[i]?.open ?? true, status: 'done', data } }))
+    } catch (e) {
+      const message = e instanceof AIError ? e.message : '获取详解失败，请重试。'
+      setExplains((prev) => ({ ...prev, [i]: { open: prev[i]?.open ?? true, status: 'error', message } }))
+    }
+  }
+
+  function toggleExplain(i: number, err: CorrectionError) {
+    const cur = explains[i]
+    if (cur?.open) {
+      setExplains((prev) => ({ ...prev, [i]: { ...prev[i], open: false } }))
+      return
+    }
+    if (cur && (cur.status === 'done' || cur.status === 'loading')) {
+      setExplains((prev) => ({ ...prev, [i]: { ...prev[i], open: true } }))
+      return
+    }
+    setExplains((prev) => ({ ...prev, [i]: { open: true, status: 'loading' } }))
+    fetchExplain(i, err)
+  }
 
   const fromStyle = highlightChanges
     ? {
@@ -82,6 +124,7 @@ export default function ErrorList({
         {status === 'done' && errors.length > 0 &&
           errors.map((err, i) => {
             const isSelected = i === selectedError
+            const ex = explains[i]
             return (
             <div
               key={i}
@@ -120,6 +163,64 @@ export default function ErrorList({
                 <p style={{ margin: '9px 0 0', fontSize: 12.5, lineHeight: 1.7, color: colors.muted3 }}>
                   {err.note}
                 </p>
+              )}
+
+              <button
+                onClick={(e) => {
+                  e.stopPropagation()
+                  toggleExplain(i, err)
+                }}
+                style={{
+                  marginTop: 10,
+                  border: 'none',
+                  background: 'none',
+                  cursor: 'pointer',
+                  padding: 0,
+                  fontSize: 12,
+                  color: colors.green,
+                  fontFamily: 'inherit',
+                }}
+              >
+                {ex?.open ? '收起详解 ▴' : '详解 ▾'}
+              </button>
+
+              {ex?.open && (
+                <div style={{ marginTop: 8 }}>
+                  {ex.status === 'loading' && (
+                    <span style={{ fontSize: 12, color: colors.muted2 }}>正在生成详解……</span>
+                  )}
+                  {ex.status === 'error' && (
+                    <span style={{ fontSize: 12, color: colors.red }}>{ex.message}</span>
+                  )}
+                  {ex.status === 'done' && ex.data && (
+                    <>
+                      {ex.data.detail && (
+                        <p style={{ margin: 0, fontSize: 12.5, lineHeight: 1.75, color: colors.muted4 }}>
+                          {ex.data.detail}
+                        </p>
+                      )}
+                      {ex.data.examples.map((item, k) => (
+                        <div key={k} style={{ marginTop: 8 }}>
+                          <div
+                            style={{
+                              fontFamily: fontFamilies.serif,
+                              fontSize: 13.5,
+                              color: colors.inkSoft,
+                              lineHeight: 1.5,
+                            }}
+                          >
+                            {item.en}
+                          </div>
+                          {item.zh && (
+                            <div style={{ fontSize: 12, color: colors.muted3, lineHeight: 1.5, marginTop: 2 }}>
+                              {item.zh}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </>
+                  )}
+                </div>
               )}
             </div>
             )

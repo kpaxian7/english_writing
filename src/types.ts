@@ -22,6 +22,12 @@ export interface HistoryEntry {
   result: CorrectionResult
 }
 
+// 针对单处修改的深入讲解（第二次 AI 调用返回）。
+export interface ErrorExplanation {
+  detail: string
+  examples: { en: string; zh: string }[]
+}
+
 // 用户在设置里填写的连接信息，保存在 localStorage。
 export interface Settings {
   baseUrl: string

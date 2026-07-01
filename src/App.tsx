@@ -190,6 +190,8 @@ export default function App() {
           showNotes={prefs.showNotes}
           selectedError={selectedError}
           onSelectError={setSelectedError}
+          settings={settings}
+          contextText={result?.corrected ?? ''}
         />
       </div>
 

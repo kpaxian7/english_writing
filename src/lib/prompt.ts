@@ -1,3 +1,4 @@
+import type { CorrectionError } from '../types'
 import { ALLOWED_CATEGORIES } from '../theme'
 
 export const SYSTEM_PROMPT = `你是一位面向中文母语者的英文写作纠错老师。用户会写下一段英文（可能有拼写、语序、时态等各种错误），你的任务是：
@@ -26,4 +27,22 @@ ${ALLOWED_CATEGORIES.map((c) => `「${c}」`).join('、')}
 
 export function buildUserPrompt(text: string): string {
   return `请纠正下面这段英文，并按要求输出 JSON：\n\n"""\n${text}\n"""`
+}
+
+export const EXPLAIN_SYSTEM_PROMPT = `你是面向中文母语者的英文写作老师。用户会给你一处已经纠正的修改（原写法 from、改正后 to、以及一句简短说明），请针对这一处，用中文做更深入的讲解，并给出例句，帮助用户真正掌握这个知识点。
+
+输出要求（务必严格遵守）：
+- 只输出一个 JSON 对象，不要包含任何解释性文字，不要用 markdown 代码块包裹。
+- JSON 结构如下：
+{
+  "detail": "中文详解：讲清这处修改背后的语法/用法规则，为什么原写法不地道、改正后为什么更好，尽量通俗易懂。",
+  "examples": [
+    { "en": "地道的英文例句", "zh": "对应中文翻译" }
+  ]
+}
+- 给 2~3 个能体现这个知识点的自然例句。
+- detail 与 zh 一律用中文，en 用英文。`
+
+export function buildExplainPrompt(error: CorrectionError, context: string): string {
+  return `这处修改出现在下面这段英文里（供参考语境）：\n\n"""\n${context}\n"""\n\n请针对这一处修改做详解：\n- 原写法（from）：${error.from || '（无）'}\n- 改正后（to）：${error.to || '（删除）'}\n- 分类：${error.cat}\n- 已有简短说明：${error.note}\n\n按要求输出 JSON。`
 }

@@ -1,8 +1,22 @@
-import type { CorrectionResult, Settings } from '../types'
-import { SYSTEM_PROMPT, buildUserPrompt } from './prompt'
+import type { CorrectionError, CorrectionResult, ErrorExplanation, Settings } from '../types'
+import {
+  SYSTEM_PROMPT,
+  buildUserPrompt,
+  EXPLAIN_SYSTEM_PROMPT,
+  buildExplainPrompt,
+} from './prompt'
 
 // 自定义错误类型，便于在 UI 区分提示。
 export class AIError extends Error {}
+
+interface ChatMessage {
+  role: 'system' | 'user' | 'assistant'
+  content: string
+}
+
+interface ChatResponse {
+  choices?: { message?: { content?: string } }[]
+}
 
 function normalizeBaseUrl(baseUrl: string): string {
   return baseUrl.trim().replace(/\/+$/, '')
@@ -42,12 +56,32 @@ function parseResult(content: string): CorrectionResult {
   return { corrected: obj.corrected, translation, errors }
 }
 
-// 调用 OpenAI 兼容的 /chat/completions 接口（纯浏览器直连，无后端）。
-export async function correctText(
-  text: string,
+function parseExplanation(content: string): ErrorExplanation {
+  let data: unknown
+  try {
+    data = JSON.parse(extractJson(content))
+  } catch {
+    throw new AIError('AI 返回的内容不是有效的 JSON，请重试。')
+  }
+  const obj = data as Record<string, unknown>
+  const detail = typeof obj?.detail === 'string' ? obj.detail : ''
+  const rawExamples = Array.isArray(obj?.examples) ? (obj.examples as Record<string, unknown>[]) : []
+  const examples = rawExamples.map((e) => ({
+    en: String(e?.en ?? ''),
+    zh: String(e?.zh ?? ''),
+  }))
+  if (!detail && examples.length === 0) {
+    throw new AIError('AI 返回的结构不符合预期，请重试。')
+  }
+  return { detail, examples }
+}
+
+// 通用请求：向 OpenAI 兼容 /chat/completions 发一次 JSON 模式请求（纯浏览器直连，无后端）。
+async function requestChat(
+  messages: ChatMessage[],
   settings: Settings,
   signal?: AbortSignal,
-): Promise<CorrectionResult> {
+): Promise<ChatResponse> {
   const baseUrl = normalizeBaseUrl(settings.baseUrl)
   if (!baseUrl) throw new AIError('请先在设置里填写 API 地址（Base URL）。')
   if (!settings.apiKey.trim()) throw new AIError('请先在设置里填写 API Key。')
@@ -64,10 +98,7 @@ export async function correctText(
       body: JSON.stringify({
         model: settings.model.trim(),
         temperature: 0.2,
-        messages: [
-          { role: 'system', content: SYSTEM_PROMPT },
-          { role: 'user', content: buildUserPrompt(text) },
-        ],
+        messages,
         response_format: { type: 'json_object' },
       }),
       signal,
@@ -94,8 +125,46 @@ export async function correctText(
     throw new AIError(`请求失败（${res.status}）${detail ? '：' + detail : ''}`)
   }
 
-  const data = await res.json()
-  const content: string | undefined = data?.choices?.[0]?.message?.content
+  return res.json()
+}
+
+function extractContent(data: ChatResponse): string {
+  const content = data?.choices?.[0]?.message?.content
   if (!content) throw new AIError('AI 没有返回内容，请重试。')
-  return parseResult(content)
+  return content
+}
+
+// 纠错：返回纠正后全文 + 中文翻译 + 结构化错误点。
+export async function correctText(
+  text: string,
+  settings: Settings,
+  signal?: AbortSignal,
+): Promise<CorrectionResult> {
+  const data = await requestChat(
+    [
+      { role: 'system', content: SYSTEM_PROMPT },
+      { role: 'user', content: buildUserPrompt(text) },
+    ],
+    settings,
+    signal,
+  )
+  return parseResult(extractContent(data))
+}
+
+// 针对单处修改再问 AI 要一份深入讲解 + 例句。
+export async function explainError(
+  error: CorrectionError,
+  context: string,
+  settings: Settings,
+  signal?: AbortSignal,
+): Promise<ErrorExplanation> {
+  const data = await requestChat(
+    [
+      { role: 'system', content: EXPLAIN_SYSTEM_PROMPT },
+      { role: 'user', content: buildExplainPrompt(error, context) },
+    ],
+    settings,
+    signal,
+  )
+  return parseExplanation(extractContent(data))
 }
