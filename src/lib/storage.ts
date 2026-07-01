@@ -1,7 +1,9 @@
-import type { Preferences, Settings } from '../types'
+import type { HistoryEntry, Preferences, Settings } from '../types'
 
 const SETTINGS_KEY = 'xxzs.settings'
 const PREFS_KEY = 'xxzs.prefs'
+const HISTORY_KEY = 'xxzs.history'
+const HISTORY_LIMIT = 30
 
 export const DEFAULT_SETTINGS: Settings = {
   // 默认指向 DeepSeek —— 对浏览器直连（CORS）友好，国内可用。
@@ -40,3 +42,19 @@ export const loadSettings = () => load(SETTINGS_KEY, DEFAULT_SETTINGS)
 export const saveSettings = (s: Settings) => save(SETTINGS_KEY, s)
 export const loadPrefs = () => load(PREFS_KEY, DEFAULT_PREFS)
 export const savePrefs = (p: Preferences) => save(PREFS_KEY, p)
+
+export function loadHistory(): HistoryEntry[] {
+  try {
+    const raw = localStorage.getItem(HISTORY_KEY)
+    if (!raw) return []
+    const data = JSON.parse(raw)
+    return Array.isArray(data) ? data : []
+  } catch {
+    return []
+  }
+}
+
+// 只保留最近 HISTORY_LIMIT 条。
+export function saveHistory(list: HistoryEntry[]): void {
+  save(HISTORY_KEY, list.slice(0, HISTORY_LIMIT))
+}

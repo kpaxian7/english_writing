@@ -4,10 +4,11 @@ import Editor from './components/Editor'
 import CorrectedPanel from './components/CorrectedPanel'
 import ErrorList from './components/ErrorList'
 import SettingsModal from './components/SettingsModal'
+import HistoryModal from './components/HistoryModal'
 import { correctText, AIError } from './lib/ai'
-import { loadPrefs, loadSettings, savePrefs, saveSettings } from './lib/storage'
+import { loadHistory, loadPrefs, loadSettings, savePrefs, saveSettings, saveHistory } from './lib/storage'
 import { colors, fontFamilies } from './theme'
-import type { CorrectionResult, Preferences, Settings } from './types'
+import type { CorrectionResult, HistoryEntry, Preferences, Settings } from './types'
 
 type Status = 'idle' | 'loading' | 'done' | 'error'
 
@@ -22,6 +23,8 @@ export default function App() {
   const [result, setResult] = useState<CorrectionResult | null>(null)
   const [errorMessage, setErrorMessage] = useState('')
   const [showSettings, setShowSettings] = useState(false)
+  const [showHistory, setShowHistory] = useState(false)
+  const [history, setHistory] = useState<HistoryEntry[]>(loadHistory)
   const [copied, setCopied] = useState(false)
   const [selectedError, setSelectedError] = useState<number | null>(null)
   const abortRef = useRef<AbortController | null>(null)
@@ -54,6 +57,10 @@ export default function App() {
       const res = await correctText(text, settings, controller.signal)
       setResult(res)
       setStatus('done')
+      const entry: HistoryEntry = { id: String(Date.now()), ts: Date.now(), input: text, result: res }
+      const nextHistory = [entry, ...history].slice(0, 30)
+      setHistory(nextHistory)
+      saveHistory(nextHistory)
     } catch (e) {
       if (e instanceof DOMException && e.name === 'AbortError') return
       setStatus('error')
@@ -87,6 +94,20 @@ export default function App() {
     savePrefs(next)
   }
 
+  function handleRestore(entry: HistoryEntry) {
+    setText(entry.input)
+    setResult(entry.result)
+    setStatus('done')
+    setSelectedError(null)
+    setErrorMessage('')
+    setShowHistory(false)
+  }
+
+  function handleClearHistory() {
+    setHistory([])
+    saveHistory([])
+  }
+
   const submitLabel = status === 'loading' ? '纠错中' : '纠错'
 
   return (
@@ -101,7 +122,10 @@ export default function App() {
         flexDirection: 'column',
       }}
     >
-      <Header onOpenSettings={() => setShowSettings(true)} />
+      <Header
+        onOpenHistory={() => setShowHistory(true)}
+        onOpenSettings={() => setShowSettings(true)}
+      />
 
       <div style={{ flex: 1, minHeight: 0, display: 'flex', gap: 18, padding: '22px 28px' }}>
         {/* 左列：原文 + 按钮 + 已纠正 */}
@@ -175,6 +199,15 @@ export default function App() {
           prefs={prefs}
           onSave={handleSaveSettings}
           onClose={() => setShowSettings(false)}
+        />
+      )}
+
+      {showHistory && (
+        <HistoryModal
+          history={history}
+          onRestore={handleRestore}
+          onClear={handleClearHistory}
+          onClose={() => setShowHistory(false)}
         />
       )}
     </div>

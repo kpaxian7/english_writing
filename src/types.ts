@@ -14,6 +14,14 @@ export interface CorrectionResult {
   errors: CorrectionError[]
 }
 
+// 一条纠错历史记录，保存在 localStorage，可回看/恢复。
+export interface HistoryEntry {
+  id: string
+  ts: number
+  input: string
+  result: CorrectionResult
+}
+
 // 用户在设置里填写的连接信息，保存在 localStorage。
 export interface Settings {
   baseUrl: string

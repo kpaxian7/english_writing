@@ -62,6 +62,15 @@ textarea::placeholder {
 .error-card:hover {
   background: #f4f1eb;
 }
+.history-item {
+  transition:
+    border-color 0.12s ease,
+    background 0.12s ease;
+}
+.history-item:hover {
+  border-color: #2e6b4f !important;
+  background: #fcfbf8;
+}
 
 @keyframes spin {
   to {
