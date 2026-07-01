@@ -56,6 +56,12 @@ textarea::placeholder {
   background: #f1eee8;
   color: #2e6b4f;
 }
+.error-card {
+  transition: background 0.12s ease;
+}
+.error-card:hover {
+  background: #f4f1eb;
+}
 
 @keyframes spin {
   to {

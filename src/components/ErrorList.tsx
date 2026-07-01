@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import type { CorrectionError } from '../types'
 import { colors, dotColor, fontFamilies } from '../theme'
 
@@ -8,9 +9,25 @@ interface Props {
   errors: CorrectionError[]
   highlightChanges: boolean
   showNotes: boolean
+  selectedError: number | null
+  onSelectError: (i: number | null) => void
 }
 
-export default function ErrorList({ status, errors, highlightChanges, showNotes }: Props) {
+export default function ErrorList({
+  status,
+  errors,
+  highlightChanges,
+  showNotes,
+  selectedError,
+  onSelectError,
+}: Props) {
+  const selectedRef = useRef<HTMLDivElement | null>(null)
+  useEffect(() => {
+    if (selectedError !== null && selectedRef.current) {
+      selectedRef.current.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
+    }
+  }, [selectedError])
+
   const fromStyle = highlightChanges
     ? {
         color: colors.red,
@@ -63,8 +80,22 @@ export default function ErrorList({ status, errors, highlightChanges, showNotes 
 
       <div style={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
         {status === 'done' && errors.length > 0 &&
-          errors.map((err, i) => (
-            <div key={i} style={{ padding: '16px 20px', borderBottom: `1px solid ${colors.borderFaint}` }}>
+          errors.map((err, i) => {
+            const isSelected = i === selectedError
+            return (
+            <div
+              key={i}
+              ref={isSelected ? selectedRef : undefined}
+              className="error-card"
+              onClick={() => onSelectError(isSelected ? null : i)}
+              style={{
+                padding: '16px 20px',
+                borderLeft: `3px solid ${isSelected ? colors.green : 'transparent'}`,
+                borderBottom: `1px solid ${colors.borderFaint}`,
+                cursor: 'pointer',
+                background: isSelected ? colors.greenSoft : undefined,
+              }}
+            >
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 9 }}>
                 <span
                   style={{
@@ -91,7 +122,8 @@ export default function ErrorList({ status, errors, highlightChanges, showNotes 
                 </p>
               )}
             </div>
-          ))}
+            )
+          })}
 
         {status === 'done' && errors.length === 0 && (
           <CenterHint title="没有发现需要修改的地方，写得不错！" />

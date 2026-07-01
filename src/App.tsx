@@ -23,6 +23,7 @@ export default function App() {
   const [errorMessage, setErrorMessage] = useState('')
   const [showSettings, setShowSettings] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [selectedError, setSelectedError] = useState<number | null>(null)
   const abortRef = useRef<AbortController | null>(null)
   const copyTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -48,6 +49,7 @@ export default function App() {
 
     setStatus('loading')
     setErrorMessage('')
+    setSelectedError(null)
     try {
       const res = await correctText(text, settings, controller.signal)
       setResult(res)
@@ -141,6 +143,10 @@ export default function App() {
           <CorrectedPanel
             status={status}
             correctedText={result?.corrected ?? ''}
+            errors={result?.errors ?? []}
+            selectedError={selectedError}
+            onSelectError={setSelectedError}
+            highlightChanges={prefs.highlightChanges}
             translation={result?.translation ?? ''}
             showTranslation={prefs.showTranslation}
             onToggleTranslation={handleToggleTranslation}
@@ -158,6 +164,8 @@ export default function App() {
           errors={result?.errors ?? []}
           highlightChanges={prefs.highlightChanges}
           showNotes={prefs.showNotes}
+          selectedError={selectedError}
+          onSelectError={setSelectedError}
         />
       </div>
 
