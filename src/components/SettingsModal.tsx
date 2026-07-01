@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { Preferences, Settings, WritingFont } from '../types'
 import { colors, fontFamilies } from '../theme'
+import { IS_HOSTED, HOSTED_MODELS } from '../lib/hosted'
 
 interface Props {
   settings: Settings
@@ -41,6 +42,9 @@ export default function SettingsModal({ settings, prefs, onSave, onClose }: Prop
   const [p, setP] = useState<Preferences>(prefs)
   const [showKey, setShowKey] = useState(false)
 
+  // 托管模式的可选模型；白名单为空时退回当前模型，保证下拉至少有一项。
+  const modelOptions = HOSTED_MODELS.length ? HOSTED_MODELS : [draft.model]
+
   return (
     <div
       style={{
@@ -71,84 +75,107 @@ export default function SettingsModal({ settings, prefs, onSave, onClose }: Prop
             设置
           </h2>
         </div>
-        <p style={{ fontSize: 12, color: colors.muted3, marginBottom: 20, lineHeight: 1.7 }}>
-          填写任意 OpenAI 兼容服务的连接信息。Key 只保存在你自己的浏览器里，不会上传到任何服务器。
-        </p>
-
-        {/* 服务商预设 */}
-        <div style={{ marginBottom: 16 }}>
-          <span style={labelStyle as React.CSSProperties}>快速填入</span>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-            {PRESETS.map((preset) => (
-              <button
-                key={preset.label}
-                className="btn-ghost"
-                onClick={() => setDraft({ ...draft, baseUrl: preset.baseUrl, model: preset.model })}
-                style={{
-                  border: `1px solid ${colors.divider}`,
-                  background: colors.white,
-                  cursor: 'pointer',
-                  fontSize: 12,
-                  color: colors.muted4,
-                  padding: '5px 12px',
-                  borderRadius: 20,
-                }}
+        {IS_HOSTED ? (
+          <>
+            <p style={{ fontSize: 12, color: colors.muted3, marginBottom: 20, lineHeight: 1.7 }}>
+              本站已提供公共体验额度，选一个模型即可开始。你的界面偏好只保存在本地浏览器。
+            </p>
+            <Field label="模型">
+              <select
+                style={{ ...inputStyle, cursor: 'pointer' } as React.CSSProperties}
+                value={draft.model}
+                onChange={(e) => setDraft({ ...draft, model: e.target.value })}
               >
-                {preset.label}
-              </button>
-            ))}
-          </div>
-        </div>
+                {modelOptions.map((m) => (
+                  <option key={m} value={m}>
+                    {m}
+                  </option>
+                ))}
+              </select>
+            </Field>
+          </>
+        ) : (
+          <>
+            <p style={{ fontSize: 12, color: colors.muted3, marginBottom: 20, lineHeight: 1.7 }}>
+              填写任意 OpenAI 兼容服务的连接信息。Key 只保存在你自己的浏览器里，不会上传到任何服务器。
+            </p>
 
-        <Field label="API 地址（Base URL）">
-          <input
-            style={inputStyle as React.CSSProperties}
-            value={draft.baseUrl}
-            onChange={(e) => setDraft({ ...draft, baseUrl: e.target.value })}
-            placeholder="https://api.deepseek.com/v1"
-            spellCheck={false}
-          />
-        </Field>
+            {/* 服务商预设 */}
+            <div style={{ marginBottom: 16 }}>
+              <span style={labelStyle as React.CSSProperties}>快速填入</span>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                {PRESETS.map((preset) => (
+                  <button
+                    key={preset.label}
+                    className="btn-ghost"
+                    onClick={() => setDraft({ ...draft, baseUrl: preset.baseUrl, model: preset.model })}
+                    style={{
+                      border: `1px solid ${colors.divider}`,
+                      background: colors.white,
+                      cursor: 'pointer',
+                      fontSize: 12,
+                      color: colors.muted4,
+                      padding: '5px 12px',
+                      borderRadius: 20,
+                    }}
+                  >
+                    {preset.label}
+                  </button>
+                ))}
+              </div>
+            </div>
 
-        <Field label="API Key">
-          <div style={{ position: 'relative' }}>
-            <input
-              style={{ ...inputStyle, paddingRight: 56 } as React.CSSProperties}
-              type={showKey ? 'text' : 'password'}
-              value={draft.apiKey}
-              onChange={(e) => setDraft({ ...draft, apiKey: e.target.value })}
-              placeholder="sk-..."
-              spellCheck={false}
-              autoComplete="off"
-            />
-            <button
-              onClick={() => setShowKey((v) => !v)}
-              style={{
-                position: 'absolute',
-                right: 8,
-                top: '50%',
-                transform: 'translateY(-50%)',
-                border: 'none',
-                background: 'none',
-                cursor: 'pointer',
-                fontSize: 12,
-                color: colors.muted3,
-              }}
-            >
-              {showKey ? '隐藏' : '显示'}
-            </button>
-          </div>
-        </Field>
+            <Field label="API 地址（Base URL）">
+              <input
+                style={inputStyle as React.CSSProperties}
+                value={draft.baseUrl}
+                onChange={(e) => setDraft({ ...draft, baseUrl: e.target.value })}
+                placeholder="https://api.deepseek.com/v1"
+                spellCheck={false}
+              />
+            </Field>
 
-        <Field label="模型名称">
-          <input
-            style={inputStyle as React.CSSProperties}
-            value={draft.model}
-            onChange={(e) => setDraft({ ...draft, model: e.target.value })}
-            placeholder="deepseek-chat"
-            spellCheck={false}
-          />
-        </Field>
+            <Field label="API Key">
+              <div style={{ position: 'relative' }}>
+                <input
+                  style={{ ...inputStyle, paddingRight: 56 } as React.CSSProperties}
+                  type={showKey ? 'text' : 'password'}
+                  value={draft.apiKey}
+                  onChange={(e) => setDraft({ ...draft, apiKey: e.target.value })}
+                  placeholder="sk-..."
+                  spellCheck={false}
+                  autoComplete="off"
+                />
+                <button
+                  onClick={() => setShowKey((v) => !v)}
+                  style={{
+                    position: 'absolute',
+                    right: 8,
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    border: 'none',
+                    background: 'none',
+                    cursor: 'pointer',
+                    fontSize: 12,
+                    color: colors.muted3,
+                  }}
+                >
+                  {showKey ? '隐藏' : '显示'}
+                </button>
+              </div>
+            </Field>
+
+            <Field label="模型名称">
+              <input
+                style={inputStyle as React.CSSProperties}
+                value={draft.model}
+                onChange={(e) => setDraft({ ...draft, model: e.target.value })}
+                placeholder="deepseek-chat"
+                spellCheck={false}
+              />
+            </Field>
+          </>
+        )}
 
         <div style={{ height: 1, background: colors.border, margin: '20px 0' }} />
 

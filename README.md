@@ -45,6 +45,20 @@ npm run preview    # 本地预览构建产物
 
 部署后用户在自己的浏览器里填入各自的 Key 即可，**你不会接触到任何用户的 Key，也不承担 API 费用**。
 
+### 托管模式（可选：用你自己的 Key 给别人体验）
+
+默认是「自带 Key」——每位用户填自己的。如果你想部署一个**开箱即用、用你自己的 Key** 的公共体验站，设置以下构建时环境变量即可（本地放 `.env.local`，线上填到 Vercel / Netlify 的环境变量里，参见 [.env.example](./.env.example)）：
+
+```bash
+VITE_DEFAULT_API_KEY=你的Key            # 设置后即进入「托管模式」
+VITE_DEFAULT_BASE_URL=https://openrouter.ai/api/v1
+VITE_DEFAULT_MODELS=openai/gpt-4o-mini,deepseek/deepseek-chat  # 允许选择的模型，逗号分隔
+```
+
+托管模式下：隐藏 Key / 地址输入，用户只能从上面列表里**选模型**，请求走你注入的 Key。
+
+> ⚠️ **安全须知**：纯前端没有后端，构建时 Key 会被内联进 JS，**部署后可被访客从浏览器提取**。请务必使用**限额 / 预充值的专用 Key**（如 OpenRouter 的限额 Key，或余额很低的预充值账户）把最坏损失封顶。**切勿提交真实 Key** —— 仓库里只提交 `.env.example`。
+
 ## 关于浏览器直连（CORS）
 
 因为没有后端，浏览器会**直接**向 AI 服务商发请求，要求该端点允许跨域（返回正确的 CORS 头）：

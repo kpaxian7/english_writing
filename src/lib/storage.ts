@@ -1,4 +1,5 @@
 import type { HistoryEntry, Preferences, Settings } from '../types'
+import { HOSTED_KEY, HOSTED_BASE_URL, HOSTED_MODEL, HOSTED_MODELS, IS_HOSTED } from './hosted'
 
 const SETTINGS_KEY = 'xxzs.settings'
 const PREFS_KEY = 'xxzs.prefs'
@@ -39,7 +40,13 @@ function save<T>(key: string, value: T): void {
   }
 }
 
-export const loadSettings = () => load(SETTINGS_KEY, DEFAULT_SETTINGS)
+export function loadSettings(): Settings {
+  const loaded = load(SETTINGS_KEY, DEFAULT_SETTINGS)
+  if (!IS_HOSTED) return loaded
+  // 托管模式：Key / 地址强制用注入值（用户不可改）；模型仅限白名单，非法则回退默认。
+  const model = HOSTED_MODELS.includes(loaded.model) ? loaded.model : HOSTED_MODEL || loaded.model
+  return { ...loaded, apiKey: HOSTED_KEY, baseUrl: HOSTED_BASE_URL || loaded.baseUrl, model }
+}
 export const saveSettings = (s: Settings) => save(SETTINGS_KEY, s)
 export const loadPrefs = () => load(PREFS_KEY, DEFAULT_PREFS)
 export const savePrefs = (p: Preferences) => save(PREFS_KEY, p)

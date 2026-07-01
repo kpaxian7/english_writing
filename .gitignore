@@ -3,6 +3,11 @@ dist
 dist-ssr
 *.local
 
+# 环境变量（可能含托管模式的默认 Key）——勿提交，仅提交 .env.example
+.env
+.env.*
+!.env.example
+
 # Editor / tooling
 .vscode/*
 !.vscode/extensions.json
