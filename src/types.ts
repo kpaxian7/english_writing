@@ -38,6 +38,9 @@ export interface Settings {
 // 排版字体
 export type WritingFont = '衬线' | '等宽'
 
+// 深浅色主题
+export type ThemeMode = 'light' | 'dark'
+
 // 界面偏好（对应原型里的可调项）
 export interface Preferences {
   writingFont: WritingFont
@@ -45,4 +48,5 @@ export interface Preferences {
   showNotes: boolean
   // 是否在「已纠正」下方展示中文翻译。
   showTranslation: boolean
+  theme: ThemeMode
 }

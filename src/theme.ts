@@ -1,26 +1,27 @@
 // 设计令牌 —— 还原原型「暖纸 + 墨绿」的配色。
+// 具体色值定义在 index.css 的 CSS 变量里，随 data-theme 在浅/深色间切换。
 export const colors = {
-  paper: '#FBFAF7',
-  ink: '#1F1E1B',
-  inkSoft: '#26251F',
-  green: '#2E6B4F',
-  greenDark: '#244F39',
-  greenSoft: 'rgba(46,107,79,0.10)',
-  red: '#B2554C',
-  redLine: 'rgba(178,85,76,0.45)',
+  paper: 'var(--c-paper)',
+  ink: 'var(--c-ink)',
+  inkSoft: 'var(--c-ink-soft)',
+  green: 'var(--c-green)',
+  greenDark: 'var(--c-green-dark)',
+  greenSoft: 'var(--c-green-soft)',
+  red: 'var(--c-red)',
+  redLine: 'var(--c-red-line)',
 
-  border: '#ECE9E2',
-  borderSoft: '#F1EEE8',
-  borderFaint: '#F4F1EB',
-  divider: '#E2DFD8',
+  border: 'var(--c-border)',
+  borderSoft: 'var(--c-border-soft)',
+  borderFaint: 'var(--c-border-faint)',
+  divider: 'var(--c-divider)',
 
-  muted1: '#A8A49C',
-  muted2: '#BDB9B1',
-  muted3: '#9A9791',
-  muted4: '#6B6862',
-  muted5: '#C4C0B8',
-  panelHead: '#FCFBF8',
-  white: '#fff',
+  muted1: 'var(--c-muted1)',
+  muted2: 'var(--c-muted2)',
+  muted3: 'var(--c-muted3)',
+  muted4: 'var(--c-muted4)',
+  muted5: 'var(--c-muted5)',
+  panelHead: 'var(--c-panel-head)',
+  white: 'var(--c-white)',
 }
 
 // 分类 -> 圆点颜色。未知分类回退到灰色。

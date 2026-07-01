@@ -18,6 +18,7 @@ export const DEFAULT_PREFS: Preferences = {
   highlightChanges: true,
   showNotes: true,
   showTranslation: true,
+  theme: 'light',
 }
 
 function load<T>(key: string, fallback: T): T {

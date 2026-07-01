@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import Header from './components/Header'
 import Editor from './components/Editor'
 import CorrectedPanel from './components/CorrectedPanel'
@@ -97,6 +97,16 @@ export default function App() {
     savePrefs(next)
   }
 
+  useEffect(() => {
+    document.documentElement.dataset.theme = prefs.theme
+  }, [prefs.theme])
+
+  function handleToggleTheme() {
+    const next = { ...prefs, theme: prefs.theme === 'dark' ? ('light' as const) : ('dark' as const) }
+    setPrefs(next)
+    savePrefs(next)
+  }
+
   function handleRestore(entry: HistoryEntry) {
     setText(entry.input)
     setResult(entry.result)
@@ -123,6 +133,8 @@ export default function App() {
       }}
     >
       <Header
+        theme={prefs.theme}
+        onToggleTheme={handleToggleTheme}
         onOpenHistory={() => setShowHistory(true)}
         onOpenSettings={() => setShowSettings(true)}
       />

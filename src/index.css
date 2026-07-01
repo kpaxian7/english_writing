@@ -1,3 +1,51 @@
+:root {
+  --c-paper: #fbfaf7;
+  --c-white: #ffffff;
+  --c-ink: #1f1e1b;
+  --c-ink-soft: #26251f;
+  --c-green: #2e6b4f;
+  --c-green-dark: #244f39;
+  --c-green-soft: rgba(46, 107, 79, 0.1);
+  --c-red: #b2554c;
+  --c-red-line: rgba(178, 85, 76, 0.45);
+  --c-border: #ece9e2;
+  --c-border-soft: #f1eee8;
+  --c-border-faint: #f4f1eb;
+  --c-divider: #e2dfd8;
+  --c-muted1: #a8a49c;
+  --c-muted2: #bdb9b1;
+  --c-muted3: #9a9791;
+  --c-muted4: #6b6862;
+  --c-muted5: #c4c0b8;
+  --c-panel-head: #fcfbf8;
+  --c-primary-hover: #244f39;
+  --c-hover-bg: #f1eee8;
+}
+
+:root[data-theme='dark'] {
+  --c-paper: #1a1917;
+  --c-white: #232220;
+  --c-ink: #eceae4;
+  --c-ink-soft: #e2dfd8;
+  --c-green: #6fb894;
+  --c-green-dark: #9fd3b6;
+  --c-green-soft: rgba(111, 184, 148, 0.14);
+  --c-red: #d98a80;
+  --c-red-line: rgba(217, 138, 128, 0.5);
+  --c-border: #322f2b;
+  --c-border-soft: #2b2925;
+  --c-border-faint: #292723;
+  --c-divider: #3a3732;
+  --c-muted1: #6e6a62;
+  --c-muted2: #837e75;
+  --c-muted3: #9c978e;
+  --c-muted4: #b6b1a8;
+  --c-muted5: #6e6a62;
+  --c-panel-head: #201f1d;
+  --c-primary-hover: #5aa17d;
+  --c-hover-bg: #2b2925;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -11,7 +59,8 @@ body,
 }
 
 body {
-  background: #fbfaf7;
+  background: var(--c-paper);
+  transition: background 0.2s ease;
 }
 
 /* 细滚动条，贴合暖纸风格 */
@@ -20,7 +69,7 @@ body {
   height: 8px;
 }
 *::-webkit-scrollbar-thumb {
-  background: #e2dfd8;
+  background: var(--c-divider);
   border-radius: 8px;
 }
 *::-webkit-scrollbar-track {
@@ -28,7 +77,7 @@ body {
 }
 
 textarea::placeholder {
-  color: #c4c0b8;
+  color: var(--c-muted5);
 }
 
 /* hover 态用类实现（替代原型的 style-hover） */
@@ -36,7 +85,7 @@ textarea::placeholder {
   transition: background 0.15s ease;
 }
 .btn-primary:hover {
-  background: #244f39 !important;
+  background: var(--c-primary-hover) !important;
 }
 .btn-ghost {
   transition:
@@ -44,8 +93,8 @@ textarea::placeholder {
     color 0.15s ease;
 }
 .btn-ghost:hover {
-  border-color: #2e6b4f !important;
-  color: #2e6b4f !important;
+  border-color: var(--c-green) !important;
+  color: var(--c-green) !important;
 }
 .icon-btn {
   transition:
@@ -53,14 +102,14 @@ textarea::placeholder {
     color 0.15s ease;
 }
 .icon-btn:hover {
-  background: #f1eee8;
-  color: #2e6b4f;
+  background: var(--c-hover-bg);
+  color: var(--c-green);
 }
 .error-card {
   transition: background 0.12s ease;
 }
 .error-card:hover {
-  background: #f4f1eb;
+  background: var(--c-hover-bg);
 }
 .history-item {
   transition:
@@ -68,8 +117,8 @@ textarea::placeholder {
     background 0.12s ease;
 }
 .history-item:hover {
-  border-color: #2e6b4f !important;
-  background: #fcfbf8;
+  border-color: var(--c-green) !important;
+  background: var(--c-hover-bg);
 }
 
 @keyframes spin {
